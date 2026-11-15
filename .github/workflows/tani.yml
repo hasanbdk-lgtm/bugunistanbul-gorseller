@@ -7,8 +7,29 @@ jobs:
     steps:
       - shell: powershell
         run: |
-          $u = 'https://servis.mgm.gov.tr/web/sondurumlar?merkezid=93401','https://www.bedas.com.tr/','https://havakalitesi.ibb.gov.tr/','https://www.metro.istanbul/','https://www.sehirhatlari.istanbul/','https://akom.ibb.istanbul/','https://kesintiapi.ckenerji.com.tr/','https://deprem.afad.gov.tr/','https://www.istanbul.gov.tr/','https://www.aa.com.tr/tr/rss/default?cat=guncel','https://www.trthaber.com/','https://ntfy.sh/','https://graph.instagram.com/','https://www.iski.istanbul/'
-          foreach ($x in $u) {
-            try { $r = Invoke-WebRequest $x -UseBasicParsing -TimeoutSec 25 -Headers @{ Origin = 'https://www.mgm.gov.tr' }; "OK   $($r.StatusCode)  $x" }
-            catch { $s = try { [int]$_.Exception.Response.StatusCode } catch { '-' }; "HATA $s  $x  $($_.Exception.Message)" }
+          [Console]::OutputEncoding = [Text.Encoding]::UTF8
+          $UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36'
+          function T($ad, $u, $method = 'Get', $body = $null) {
+            try {
+              $p = @{ Uri = $u; UseBasicParsing = $true; TimeoutSec = 25; UserAgent = $UA; Method = $method }
+              if ($body) { $p.Body = $body; $p.ContentType = 'application/x-www-form-urlencoded; charset=utf-8' }
+              $r = Invoke-WebRequest @p
+              $c = $r.Content; if ($c -is [byte[]]) { $c = [Text.Encoding]::UTF8.GetString($c) }
+              "OK   $($r.StatusCode) $ad  len=$($c.Length)  $((($c -replace '\s+', ' ').Substring(0, [Math]::Min(160, $c.Length))))"
+            } catch { $s = try { [int]$_.Exception.Response.StatusCode } catch { '-' }; "HATA $s $ad  $($_.Exception.Message)" }
           }
+          T 'ckenerji-outages' 'https://kesintiapi.ckenerji.com.tr/BEDAS/RetrieveOutages'
+          T 'bedas-elektrik-getir' 'https://www.bedas.com.tr/elektrik-getir' 'Post' @{ countryName = 'İSTANBUL'; cityName = 'FATİH' }
+          T 'kesinti.bedas' 'https://kesinti.bedas.com.tr/'
+          T 'enerjisa' 'https://www.enerjisa.com.tr/'
+          T 'havakalitesi' 'https://havakalitesi.ibb.gov.tr/Pages/GetAirQualityStations?type=0'
+          T 'sim.csb' 'https://sim.csb.gov.tr/'
+          T 'openmeteo-aq' 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=41.01&longitude=28.97&current=european_aqi,pm10,pm2_5'
+          T 'metro-ariza' 'https://www.metro.istanbul/SeferDurumlari/Ariza'
+          T 'sehirhatlari-duyuru' 'https://sehirhatlari.istanbul/tr/duyurular'
+          T 'akom-feed' 'https://akom.ibb.istanbul/feed/'
+          T 'aa-rss' 'https://www.aa.com.tr/tr/rss/default?cat=guncel'
+          T 'gnews-aa' 'https://news.google.com/rss/search?q=%C4%B0stanbul+site:aa.com.tr&hl=tr&gl=TR&ceid=TR:tr'
+          T 'gnews-metro' 'https://news.google.com/rss/search?q=metro+ar%C4%B1za+%C4%B0stanbul&hl=tr&gl=TR&ceid=TR:tr'
+          T 'ibb-acikveri' 'https://data.ibb.gov.tr/api/3/action/package_list'
+          T 'iski' 'https://iski.istanbul/baraj-doluluk/'
