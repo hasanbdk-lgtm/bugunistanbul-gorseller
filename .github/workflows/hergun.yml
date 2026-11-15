@@ -1,0 +1,22 @@
+# @hergun1genel quote Reels at 08:30, 12:30 and 20:30 Istanbul (each run starts ~25 min early and waits)
+name: Hergun1genel
+on:
+  schedule:
+    - cron: '5 5 * * *'
+    - cron: '5 9 * * *'
+    - cron: '5 17 * * *'
+  workflow_dispatch:
+    inputs:
+      vakit:
+        description: 'sabah | ogle | aksam'
+        default: 'ogle'
+concurrency: { group: hergun, cancel-in-progress: false }
+jobs:
+  hergun:
+    uses: ./.github/workflows/_is.yml
+    with:
+      is: hergun
+      vakit: ${{ github.event_name != 'schedule' && inputs.vakit || (github.event.schedule == '5 5 * * *' && 'sabah' || (github.event.schedule == '5 9 * * *' && 'ogle' || 'aksam')) }}
+      saat: ${{ github.event_name != 'schedule' && '' || (github.event.schedule == '5 5 * * *' && '08:30' || (github.event.schedule == '5 9 * * *' && '12:30' || '20:30')) }}
+      medya: true
+    secrets: inherit

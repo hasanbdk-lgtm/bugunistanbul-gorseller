@@ -1,0 +1,55 @@
+# Shared job: checks out the private state/code repo and runs one task of the Bugün İstanbul automation.
+# Real posting happens only when the repository variable CANLI is "1"; otherwise every script runs in dry-run mode.
+name: is
+on:
+  workflow_call:
+    inputs:
+      is: { type: string, required: true }
+      vakit: { type: string, default: '' }
+      saat: { type: string, default: '' }
+      medya: { type: boolean, default: false }
+
+jobs:
+  calis:
+    runs-on: windows-latest
+    timeout-minutes: 100
+    steps:
+      - name: Türkiye saati
+        shell: cmd
+        run: tzutil /s "Turkey Standard Time"
+
+      - uses: actions/checkout@v4
+        with:
+          repository: hasanbdk-lgtm/bugunistanbul-veri
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 1
+
+      - if: inputs.medya
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - if: inputs.medya
+        name: Ses ve video araçları
+        shell: pwsh
+        run: |
+          python -m pip install --quiet --disable-pip-version-check edge-tts==7.3.1
+          if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) { choco install ffmpeg -y --no-progress | Out-Null }
+          ffmpeg -version | Select-Object -First 1
+
+      - name: Çalıştır
+        shell: powershell
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          HERGUN_TOKEN: ${{ secrets.HERGUN_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+          NTFY_KONU: ${{ secrets.NTFY_KONU }}
+          KOD_DEPO: ${{ github.repository }}
+          CANLI: ${{ vars.CANLI }}
+          IS: ${{ inputs.is }}
+          VAKIT: ${{ inputs.vakit }}
+          SAAT: ${{ inputs.saat }}
+        run: |
+          $c = @{}; if ($env:CANLI -eq '1') { $c.Canli = $true }
+          & .\bulut\calistir.ps1 -Is $env:IS -Vakit $env:VAKIT -Saat $env:SAAT @c

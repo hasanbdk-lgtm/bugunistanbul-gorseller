@@ -1,0 +1,19 @@
+# Starts 10:35 Istanbul, renders "Bugün ne yapsak?" and posts it at 11:00
+name: Bugün ne yapsak
+on:
+  schedule:
+    - cron: '35 7 * * *'
+  workflow_dispatch:
+    inputs:
+      saat:
+        description: 'Paylaşım saati (HH:mm, boş = hemen)'
+        default: ''
+concurrency: { group: oneri, cancel-in-progress: false }
+jobs:
+  oneri:
+    uses: ./.github/workflows/_is.yml
+    with:
+      is: oneri
+      saat: ${{ github.event_name == 'schedule' && '11:00' || inputs.saat }}
+      medya: true
+    secrets: inherit

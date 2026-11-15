@@ -1,0 +1,19 @@
+# Starts 07:35 Istanbul (GitHub cron often runs late), renders the bulletin and posts it at 08:00
+name: Sabah bülteni
+on:
+  schedule:
+    - cron: '35 4 * * *'
+  workflow_dispatch:
+    inputs:
+      saat:
+        description: 'Paylaşım saati (HH:mm, boş = hemen)'
+        default: ''
+concurrency: { group: bulten, cancel-in-progress: false }
+jobs:
+  bulten:
+    uses: ./.github/workflows/_is.yml
+    with:
+      is: bulten
+      saat: ${{ github.event_name == 'schedule' && '08:00' || inputs.saat }}
+      medya: true
+    secrets: inherit

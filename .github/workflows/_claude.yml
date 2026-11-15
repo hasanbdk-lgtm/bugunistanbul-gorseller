@@ -1,0 +1,43 @@
+# Shared job: runs a Claude Code task (morning prep or news drafts) on a Windows runner, then commits.
+# The checkout keeps no GitHub credentials, so the Claude step cannot push or read the GitHub token.
+name: claude
+on:
+  workflow_call:
+    inputs:
+      is: { type: string, required: true }
+
+jobs:
+  claude:
+    runs-on: windows-latest
+    timeout-minutes: 75
+    steps:
+      - name: Türkiye saati
+        shell: cmd
+        run: tzutil /s "Turkey Standard Time"
+
+      - uses: actions/checkout@v4
+        with:
+          repository: hasanbdk-lgtm/bugunistanbul-veri
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Claude Code
+        shell: pwsh
+        run: npm install -g --silent @anthropic-ai/claude-code | Out-Null
+
+      - name: Görev
+        shell: powershell
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
+          IS: ${{ inputs.is }}
+        run: '& .\bulut\claude.ps1 -Is $env:IS'
+
+      - name: Kaydet
+        if: always()
+        shell: powershell
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          IS: ${{ inputs.is }}
+        run: '& .\bulut\kaydet.ps1 -Mesaj $env:IS'

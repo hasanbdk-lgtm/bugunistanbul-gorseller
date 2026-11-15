@@ -1,0 +1,12 @@
+# 06:15 Istanbul: weather + planned power cuts into gun.json for the morning Claude routine
+name: Sabah verisi
+on:
+  schedule:
+    - cron: '15 3 * * *'
+  workflow_dispatch:
+jobs:
+  veri:
+    uses: ./.github/workflows/_is.yml
+    with:
+      is: veri
+    secrets: inherit
