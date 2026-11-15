@@ -1,0 +1,14 @@
+# Temporary: which data sources can a GitHub runner reach?
+name: Tanı
+on: workflow_dispatch
+jobs:
+  tani:
+    runs-on: windows-latest
+    steps:
+      - shell: powershell
+        run: |
+          $u = 'https://servis.mgm.gov.tr/web/sondurumlar?merkezid=93401','https://www.bedas.com.tr/','https://havakalitesi.ibb.gov.tr/','https://www.metro.istanbul/','https://www.sehirhatlari.istanbul/','https://akom.ibb.istanbul/','https://kesintiapi.ckenerji.com.tr/','https://deprem.afad.gov.tr/','https://www.istanbul.gov.tr/','https://www.aa.com.tr/tr/rss/default?cat=guncel','https://www.trthaber.com/','https://ntfy.sh/','https://graph.instagram.com/','https://www.iski.istanbul/'
+          foreach ($x in $u) {
+            try { $r = Invoke-WebRequest $x -UseBasicParsing -TimeoutSec 25 -Headers @{ Origin = 'https://www.mgm.gov.tr' }; "OK   $($r.StatusCode)  $x" }
+            catch { $s = try { [int]$_.Exception.Response.StatusCode } catch { '-' }; "HATA $s  $x  $($_.Exception.Message)" }
+          }
