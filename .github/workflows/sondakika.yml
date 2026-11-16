@@ -1,13 +1,21 @@
-# Every 5 minutes: apply phone approvals, then poll breaking-news sources and send new drafts to the phone
+# Son dakika: GitHub runs a */5 cron only every ~40 minutes, so each run polls in a loop itself.
+# A run starts every 2 hours and loops ~170 minutes (apply phone approvals, poll sources, send new drafts,
+# save state, every 5 minutes); the next scheduled run waits in the queue until the current one ends.
 name: Son dakika
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 */2 * * *'
   workflow_dispatch:
+    inputs:
+      dakika:
+        description: 'Kaç dakika dönsün'
+        default: '170'
 concurrency: { group: sondakika, cancel-in-progress: false }
 jobs:
   sondakika:
     uses: ./.github/workflows/_is.yml
     with:
       is: sondakika
+      dakika: ${{ github.event_name == 'schedule' && 170 || fromJSON(inputs.dakika) }}
+      sure: 200
     secrets: inherit

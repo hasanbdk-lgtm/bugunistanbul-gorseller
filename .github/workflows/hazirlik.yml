@@ -1,8 +1,8 @@
-# 06:40 Istanbul: Claude writes today's bulletin texts, narration and the 11:00 recommendation
+# 05:50 Istanbul (waits for gun.json): Claude writes today's bulletin texts, narration and the 11:00 recommendation
 name: Sabah hazırlığı
 on:
   schedule:
-    - cron: '40 3 * * *'
+    - cron: '50 2 * * *'
   workflow_dispatch:
 concurrency: { group: hazirlik, cancel-in-progress: false }
 jobs:

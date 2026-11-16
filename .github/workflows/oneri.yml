@@ -1,8 +1,8 @@
-# Starts 10:35 Istanbul, renders "Bugün ne yapsak?" and posts it at 11:00
+# Starts 09:00 Istanbul (cron runs late), renders "Bugün ne yapsak?" and posts it at 11:00
 name: Bugün ne yapsak
 on:
   schedule:
-    - cron: '35 7 * * *'
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       saat:

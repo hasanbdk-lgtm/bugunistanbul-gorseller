@@ -9,7 +9,7 @@ on:
 jobs:
   claude:
     runs-on: windows-latest
-    timeout-minutes: 75
+    timeout-minutes: 150
     steps:
       - name: Türkiye saati
         shell: cmd

@@ -1,8 +1,8 @@
-# 06:15 Istanbul: weather + planned power cuts into gun.json for the morning Claude routine
+# 05:35 Istanbul (GitHub cron runs 30-50 min late): weather + planned power cuts into gun.json for the morning Claude routine
 name: Sabah verisi
 on:
   schedule:
-    - cron: '15 3 * * *'
+    - cron: '35 2 * * *'
   workflow_dispatch:
 jobs:
   veri:

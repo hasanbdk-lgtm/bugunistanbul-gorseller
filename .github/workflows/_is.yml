@@ -8,11 +8,13 @@ on:
       vakit: { type: string, default: '' }
       saat: { type: string, default: '' }
       medya: { type: boolean, default: false }
+      dakika: { type: number, default: 0 }    # sondakika loop length
+      sure: { type: number, default: 240 }    # job timeout; posting jobs start early and wait up to ~3 h
 
 jobs:
   calis:
     runs-on: windows-latest
-    timeout-minutes: 100
+    timeout-minutes: ${{ inputs.sure }}
     steps:
       - name: Türkiye saati
         shell: cmd
@@ -50,6 +52,7 @@ jobs:
           IS: ${{ inputs.is }}
           VAKIT: ${{ inputs.vakit }}
           SAAT: ${{ inputs.saat }}
+          DAKIKA: ${{ inputs.dakika }}
         run: |
           $c = @{}; if ($env:CANLI -eq '1') { $c.Canli = $true }
-          & .\bulut\calistir.ps1 -Is $env:IS -Vakit $env:VAKIT -Saat $env:SAAT @c
+          & .\bulut\calistir.ps1 -Is $env:IS -Vakit $env:VAKIT -Saat $env:SAAT -Dakika ([int]$env:DAKIKA) @c
