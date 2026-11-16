@@ -1,8 +1,6 @@
-# Starts 09:00 Istanbul (cron runs late), renders "Bugün ne yapsak?" and posts it at 11:00
+# Started by the son dakika loop (bulut/calistir.ps1 $Plan) at its time; GitHub cron was hours late.
 name: Bugün ne yapsak
 on:
-  schedule:
-    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       saat:

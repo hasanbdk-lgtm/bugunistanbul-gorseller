@@ -1,8 +1,7 @@
+# Started by the son dakika loop (bulut/calistir.ps1 $Plan) at its time; GitHub cron was hours late.
 # Hourly 07:10–23:10 Istanbul: Claude turns news candidates into story drafts (skipped when there are none)
 name: Haber taslakları
 on:
-  schedule:
-    - cron: '10 4-20 * * *'
   workflow_dispatch:
 concurrency: { group: haber, cancel-in-progress: false }
 jobs:

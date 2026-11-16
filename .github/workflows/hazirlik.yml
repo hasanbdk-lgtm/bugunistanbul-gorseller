@@ -1,8 +1,6 @@
-# 05:50 Istanbul (waits for gun.json): Claude writes today's bulletin texts, narration and the 11:00 recommendation
+# Started by the son dakika loop (bulut/calistir.ps1 $Plan) at its time; GitHub cron was hours late.
 name: Sabah hazırlığı
 on:
-  schedule:
-    - cron: '50 2 * * *'
   workflow_dispatch:
 concurrency: { group: hazirlik, cancel-in-progress: false }
 jobs:

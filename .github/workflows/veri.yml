@@ -1,8 +1,6 @@
-# 05:35 Istanbul (GitHub cron runs 30-50 min late): weather + planned power cuts into gun.json for the morning Claude routine
+# Started by the son dakika loop (bulut/calistir.ps1 $Plan) at its time; GitHub cron was hours late.
 name: Sabah verisi
 on:
-  schedule:
-    - cron: '35 2 * * *'
   workflow_dispatch:
 jobs:
   veri:

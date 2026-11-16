@@ -1,22 +1,22 @@
-# @hergun1genel quote Reels at 08:30, 12:30 and 20:30 Istanbul (each run starts an hour early and waits; cron runs late)
+# @hergun1genel quote Reels at 08:30, 12:30 and 20:30 Istanbul. Started ~25 min early by the son dakika loop
+# (bulut/calistir.ps1 $Plan) with vakit + saat; the job waits for the posting time itself.
 name: Hergun1genel
 on:
-  schedule:
-    - cron: '30 4 * * *'
-    - cron: '30 8 * * *'
-    - cron: '30 16 * * *'
   workflow_dispatch:
     inputs:
       vakit:
         description: 'sabah | ogle | aksam'
         default: 'ogle'
+      saat:
+        description: 'Paylaşım saati (HH:mm, boş = hemen)'
+        default: ''
 concurrency: { group: hergun, cancel-in-progress: false }
 jobs:
   hergun:
     uses: ./.github/workflows/_is.yml
     with:
       is: hergun
-      vakit: ${{ github.event_name != 'schedule' && inputs.vakit || (github.event.schedule == '30 4 * * *' && 'sabah' || (github.event.schedule == '30 8 * * *' && 'ogle' || 'aksam')) }}
-      saat: ${{ github.event_name != 'schedule' && '' || (github.event.schedule == '30 4 * * *' && '08:30' || (github.event.schedule == '30 8 * * *' && '12:30' || '20:30')) }}
+      vakit: ${{ inputs.vakit }}
+      saat: ${{ inputs.saat }}
       medya: true
     secrets: inherit

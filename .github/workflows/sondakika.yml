@@ -1,10 +1,10 @@
-# Son dakika: GitHub runs a */5 cron only every ~40 minutes, so each run polls in a loop itself.
-# A run starts every 2 hours and loops ~170 minutes (apply phone approvals, poll sources, send new drafts,
-# save state, every 5 minutes); the next scheduled run waits in the queue until the current one ends.
+# Son dakika + the automation's clock: GitHub cron is late and sparse, so each run polls in a loop itself
+# and starts the timed jobs (see bulut/calistir.ps1 $Plan). Each run loops ~170 minutes (apply phone approvals, poll sources, send new drafts,
+# save state, every 5 minutes) and queues its successor 15 min before the end; the 3-hourly cron only restarts a broken chain.
 name: Son dakika
 on:
   schedule:
-    - cron: '0 */2 * * *'
+    - cron: '0 */3 * * *'
   workflow_dispatch:
     inputs:
       dakika:

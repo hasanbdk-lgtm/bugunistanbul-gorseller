@@ -1,8 +1,6 @@
-# Starts 06:45 Istanbul (GitHub cron often runs 30-50 min late), renders the bulletin and posts it at 08:00
+# Started by the son dakika loop (bulut/calistir.ps1 $Plan) at its time; GitHub cron was hours late.
 name: Sabah bülteni
 on:
-  schedule:
-    - cron: '45 3 * * *'
   workflow_dispatch:
     inputs:
       saat:
