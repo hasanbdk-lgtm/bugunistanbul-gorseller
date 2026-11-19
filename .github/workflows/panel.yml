@@ -33,6 +33,9 @@ jobs:
           FB_TOKEN: ${{ secrets.FB_TOKEN }}
           FB_SAYFA: ${{ secrets.FB_SAYFA }}
           PANEL_URL: ${{ secrets.PANEL_URL }}
+          TT_CLIENT_KEY: ${{ secrets.TT_CLIENT_KEY }}
+          TT_CLIENT_SECRET: ${{ secrets.TT_CLIENT_SECRET }}
+          TT_REFRESH: ${{ secrets.TT_REFRESH }}
           TZ: Europe/Istanbul
         run: |
           if (-not $env:PANEL_URL) { Write-Output 'PANEL_URL gizli ayarı yok (bulut-anahtar-yukle.ps1), atlandı.'; exit 0 }
