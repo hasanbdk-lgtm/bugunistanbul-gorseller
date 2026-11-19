@@ -47,6 +47,11 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
           GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
           NTFY_KONU: ${{ secrets.NTFY_KONU }}
+          FB_TOKEN: ${{ secrets.FB_TOKEN }}
+          FB_SAYFA: ${{ secrets.FB_SAYFA }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH: ${{ secrets.YT_REFRESH }}
           KOD_DEPO: ${{ github.repository }}
           CANLI: ${{ vars.CANLI }}
           IS: ${{ inputs.is }}
