@@ -1,0 +1,44 @@
+# Every 30 min: Bugün İstanbul Instagram + Facebook numbers (followers, likes, views, posts) to the
+# Yönetim Paneli. Only numbers leave; tokens stay in secrets. Runs regardless of CANLI (it posts nothing publicly).
+name: Panel rakamları
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+concurrency: { group: panel, cancel-in-progress: false }
+jobs:
+  panel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: hasanbdk-lgtm/bugunistanbul-veri
+          token: ${{ secrets.GH_PAT }}
+          fetch-depth: 1
+          sparse-checkout: |
+            panel-rakam.ps1
+            ayarlar.json
+          sparse-checkout-cone-mode: false
+      # views cost one API call per post, so they are cached and refreshed every 3 hours
+      - uses: actions/cache/restore@v4
+        with:
+          path: panel-onbellek.json
+          key: panel-onbellek-${{ github.run_id }}
+          restore-keys: panel-onbellek-
+      - name: Rakamları gönder
+        shell: pwsh
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          FB_TOKEN: ${{ secrets.FB_TOKEN }}
+          FB_SAYFA: ${{ secrets.FB_SAYFA }}
+          PANEL_URL: ${{ secrets.PANEL_URL }}
+          TZ: Europe/Istanbul
+        run: |
+          if (-not $env:PANEL_URL) { Write-Output 'PANEL_URL gizli ayarı yok (bulut-anahtar-yukle.ps1), atlandı.'; exit 0 }
+          ./panel-rakam.ps1
+      - if: always() && hashFiles('panel-onbellek.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: panel-onbellek.json
+          key: panel-onbellek-${{ github.run_id }}
